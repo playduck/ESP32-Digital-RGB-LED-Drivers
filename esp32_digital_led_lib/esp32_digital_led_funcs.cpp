@@ -1,4 +1,4 @@
-/* 
+/*
  * Supplemental function for the ESP32 Digital LED Library
  *
  * Copyright (c) 2019 Martin F. Falatic
@@ -8,7 +8,7 @@
  *
  */
 
-/* 
+/*
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -34,7 +34,7 @@
 #elif defined(ARDUINO) // pre-1.0
   // No extras
 #elif defined(ESP_PLATFORM)
-  #include "../../main/arduinoish.hpp"
+  // #include "arduinoish.hpp" // ugh
 #endif
 
 #include "esp32_digital_led_lib.h"
@@ -59,10 +59,10 @@ void simpleStepper(strand_t * strands [], int numStrands, unsigned long delay_ms
       stepper = 0;
       colord += 2;
     }
-  
-    if(colord > highLimit) 
+
+    if(colord > highLimit)
       colord = 0;
-    
+
     digitalLeds_drawPixels(strands, numStrands);
     delay(delay_ms);
   }
@@ -73,8 +73,7 @@ void simpleStepper(strand_t * strands [], int numStrands, unsigned long delay_ms
 //**************************************************************************//
 void randomStrands(strand_t * strands[], int numStrands, unsigned long delay_ms, unsigned long timeout_ms)
 {
-  Serial.print("DEMO: random colors, delay = ");
-  Serial.println(delay_ms);
+  ESP_LOGI("DEMO", "random colors, delay = %lu", delay_ms);
   uint32_t dimmer = 0x0F0F0F0F;
   unsigned long start_ms = millis();
   while (timeout_ms == 0 || (millis() - start_ms < timeout_ms)) {
@@ -142,22 +141,11 @@ void scanners(strand_t * strands[], int numStrands, unsigned long delay_ms, unsi
     pixelFromRGBW(c, c, c, 0),
     pixelFromRGBW(0, 0, 0, c),
   };
-  Serial.print("DEMO: scanners(");
+  ESP_LOGI("DEMO", "Scanners");
   for (i = 0; i < numStrands; i++) {
     pScanner[i] = new Scannerer(strands[i], scanColors[i]);
-    if (i > 0) {
-      Serial.print(", ");
-    }
-    Serial.print("ch");
-    Serial.print(strands[i]->rmtChannel);
-    Serial.print(" (0x");
-    Serial.print((uint32_t)pScanner[i], HEX);
-    Serial.print(")");
-    Serial.print(" #");
-    Serial.print((uint32_t)scanColors[i].raw32, HEX);
+    ESP_LOGI("DEMO - Scanners", "ch: %i (%06X) #%06X", strands[i]->rmtChannel, (uint32_t)pScanner[i], (uint32_t)scanColors[i].raw32);
   }
-  Serial.print(")");
-  Serial.println();
   unsigned long start_ms = millis();
   while (timeout_ms == 0 || (millis() - start_ms < timeout_ms)) {
     for (i = 0; i < numStrands; i++) {
@@ -259,20 +247,11 @@ void rainbows(strand_t * strands[], int numStrands, unsigned long delay_ms, unsi
   //Rainbower rbow(pStrand); Rainbower * pRbow = &rbow;
   Rainbower * pRbow[numStrands];
   int i;
-  Serial.print("DEMO: rainbows(");
+  ESP_LOGI("DEMO", "Rainbows");
   for (i = 0; i < numStrands; i++) {
     pRbow[i] = new Rainbower(strands[i]);
-    if (i > 0) {
-      Serial.print(", ");
-    }
-    Serial.print("ch");
-    Serial.print(strands[i]->rmtChannel);
-    Serial.print(" (0x");
-    Serial.print((uint32_t)pRbow[i], HEX);
-    Serial.print(")");
+    ESP_LOGI("DEMO - Rainbows", "ch%i (%06X)", strands[i]->rmtChannel, (uint32_t)pRbow[i]);
   }
-  Serial.print(")");
-  Serial.println();
   unsigned long start_ms = millis();
   while (timeout_ms == 0 || (millis() - start_ms < timeout_ms)) {
     for (i = 0; i < numStrands; i++) {

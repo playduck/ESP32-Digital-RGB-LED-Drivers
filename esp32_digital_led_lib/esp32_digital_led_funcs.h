@@ -1,4 +1,4 @@
-/* 
+/*
  * Supplemental function for the ESP32 Digital LED Library
  *
  * Copyright (c) 2019 Martin F. Falatic
@@ -8,7 +8,7 @@
  *
  */
 
-/* 
+/*
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -30,6 +30,23 @@
 
 #ifndef ESP32_DIGITAL_LED_FUNCTIONS_H
 #define ESP32_DIGITAL_LED_FUNCTIONS_H
+
+#include <esp_system.h>
+#include <esp_log.h>
+#include <nvs_flash.h>
+#include <stdio.h>
+#include <driver/gpio.h>
+#include <driver/uart.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+#include <soc/rmt_struct.h>
+
+#ifndef delay
+    #define delay(ms) (vTaskDelay(pdMS_TO_TICKS(ms)))
+#endif
+#ifndef millis
+    #define millis() (xTaskGetTickCount() * portTICK_PERIOD_MS)
+#endif
 
 #ifdef __cplusplus
 extern "C" {
