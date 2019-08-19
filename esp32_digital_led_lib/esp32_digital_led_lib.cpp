@@ -1,8 +1,8 @@
-/* 
+/*
  * Library for driving digital RGB(W) LEDs using the ESP32's RMT peripheral
  *
  * Modifications Copyright (c) 2017-2019 Martin F. Falatic
- * 
+ *
  * Portions modified using FastLED's ClocklessController as a reference
  *   Copyright (c) 2018 Samuel Z. Guyer
  *   Copyright (c) 2017 Thomas Basler
@@ -12,7 +12,7 @@
  *
  */
 
-/* 
+/*
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -48,7 +48,7 @@ extern "C" {
   #include "freertos/semphr.h"
   #include "soc/rmt_struct.h"
 #elif defined(ESP_PLATFORM)
-  #include <esp_intr.h>
+  #include <esp_intr_alloc.h>
   #include <driver/gpio.h>
   #include <driver/rmt.h>
   #include <freertos/FreeRTOS.h>
@@ -202,7 +202,7 @@ int digitalLeds_initDriver()
     rc = esp_intr_alloc(ETS_RMT_INTR_SOURCE, 0, rmtInterruptHandler, nullptr, &gRmtIntrHandle);
   }
 
-  return rc;  
+  return rc;
 }
 
 
@@ -341,18 +341,18 @@ int IRAM_ATTR digitalLeds_drawPixels(strand_t * strands [], int numStrands)
         pState->buf_data[1 + i * 4] = pStrand->pixels[i].r;
         pState->buf_data[2 + i * 4] = pStrand->pixels[i].b;
         pState->buf_data[3 + i * 4] = pStrand->pixels[i].w;
-      }    
+      }
     }
     else {
       return -1;
     }
-  
+
     pState->buf_pos = 0;
     pState->buf_half = 0;
-  
+
     rmt_set_tx_intr_en(static_cast<rmt_channel_t>(rmtChannel), true);
 
-    copyHalfBlockToRmt(pStrand);  
+    copyHalfBlockToRmt(pStrand);
     if (pState->buf_pos < pState->buf_len) {  // Fill the other half of the buffer block
       copyHalfBlockToRmt(pStrand);
     }
@@ -422,7 +422,7 @@ static IRAM_ATTR void copyHalfBlockToRmt(strand_t * pStrand)
   for (i *= 8; i < MAX_PULSES; i++) {
     RMTMEM.chan[pStrand->rmtChannel].data32[i + offset].val = 0;
   }
-  
+
   pState->buf_pos += len;
 
   return;
